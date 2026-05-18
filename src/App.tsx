@@ -20,6 +20,7 @@ import HomepageLayoutPage from "./pages/HomepageLayout";
 import OrdersPage from "./pages/Orders";
 import AttributeFiltersPage from "./pages/AttributeFilters";
 import CategoriesPage from "./pages/Categories";
+import EventsPage from "./pages/Events";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/attribute-filters" element={<AttributeFiltersPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/events" element={<EventsPage />} />
             <Route path="/blank" element={<Blank />} />
 
             {/* Forms */}

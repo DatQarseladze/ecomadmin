@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/", pro: false }, { name: "Sliders and Banners", path: "/sliders" }, { name: "Header", path: "/header" }, { name: "Footer", path: "/footer" }, { name: "Branches", path: "/branches" }, { name: "Homepage Layout", path: "/homepage-layout" }, { name: "Orders", path: "/orders" }, { name: "Attribute Filters", path: "/attribute-filters" }, { name: "Categories", path: "/categories" }],
+    subItems: [{ name: "Ecommerce", path: "/", pro: false }, { name: "Sliders and Banners", path: "/sliders" }, { name: "Header", path: "/header" }, { name: "Footer", path: "/footer" }, { name: "Branches", path: "/branches" }, { name: "Homepage Layout", path: "/homepage-layout" }, { name: "Orders", path: "/orders" }, { name: "Attribute Filters", path: "/attribute-filters" }, { name: "Categories", path: "/categories" }, { name: "Events", path: "/events" }],
   },
   {
     icon: <CalenderIcon />,
