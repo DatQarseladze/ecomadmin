@@ -4,8 +4,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   PencilIcon,
-  PlusIcon,
-  TrashBinIcon,
 } from "../icons";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -23,7 +21,6 @@ type FormMode = "create" | "edit";
 
 interface FormState {
   mode: FormMode;
-  parentId: number | null;
   category: Category | null;
 }
 
@@ -47,8 +44,6 @@ const INITIAL_CATEGORIES: Category[] = [
   { id: 13, parentId: 3,    name: "სმარტფონები",            image: "",                  icon: "📱", order: 1 },
 ];
 
-let nextId = 1000;
-
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
 const inputCls =
@@ -59,7 +54,7 @@ const labelCls = "block text-xs font-medium text-gray-600 dark:text-gray-400 mb-
 
 interface CategoryFormProps {
   state: FormState;
-  onSave: (data: Omit<Category, "id">, id?: number) => void;
+  onSave: (data: Omit<Category, "id">, id: number) => void;
   onCancel: () => void;
 }
 
@@ -74,23 +69,23 @@ function CategoryForm({ state, onSave, onCancel }: CategoryFormProps) {
 
   const handleFile = (file: File) => setImage(URL.createObjectURL(file));
 
-  const canSave = name.trim().length > 0;
+  const canSave = name.trim().length > 0 && editing?.id !== undefined;
 
   const handleSubmit = () => {
-    if (!canSave) return;
+    if (!canSave || editing?.id === undefined) return;
     onSave(
       {
-        parentId: editing?.parentId ?? state.parentId,
+        parentId: editing.parentId ?? null,
         name: name.trim(),
         order,
         image,
         icon,
       },
-      editing?.id,
+      editing.id,
     );
   };
 
-  const title = state.mode === "edit" ? "რედაქტირება" : state.parentId === null ? "ახალი კატეგორია" : "ახალი ქვეკატეგორია";
+  const title = "რედაქტირება";
 
   return (
     <div className="fixed inset-0 z-[100000] flex items-center justify-center px-4">
@@ -116,6 +111,7 @@ function CategoryForm({ state, onSave, onCancel }: CategoryFormProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
+              readOnly={state.mode === "edit"}
             />
           </div>
 
@@ -222,13 +218,11 @@ interface RowProps {
   canMoveUp: boolean;
   canMoveDown: boolean;
   onEdit: (c: Category) => void;
-  onDelete: (id: number) => void;
-  onAddChild?: (parentId: number) => void;
 }
 
 function CategoryRow({
   category, rowIndex, isSuper, expanded, childCount,
-  onToggleExpand, onMove, canMoveUp, canMoveDown, onEdit, onDelete, onAddChild,
+  onToggleExpand, onMove, canMoveUp, canMoveDown, onEdit,
 }: RowProps) {
   return (
     <tr className={`group border-l-2 ${isSuper ? "border-emerald-400/60 bg-emerald-50/30 dark:bg-emerald-900/10" : "border-transparent"} hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors`}>
@@ -301,28 +295,12 @@ function CategoryRow({
       </td>
       <td className="px-4 py-3 w-32">
         <div className="flex items-center gap-1.5 justify-end">
-          {isSuper && onAddChild && (
-            <button
-              onClick={() => onAddChild(category.id)}
-              className="p-1.5 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
-              title="ქვეკატეგორიის დამატება"
-            >
-              <PlusIcon className="w-3.5 h-3.5" />
-            </button>
-          )}
           <button
             onClick={() => onEdit(category)}
             className="p-1.5 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
             title="რედაქტირება"
           >
             <PencilIcon className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => onDelete(category.id)}
-            className="p-1.5 rounded-md border border-red-200 dark:border-red-900/40 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors"
-            title="წაშლა"
-          >
-            <TrashBinIcon className="w-3.5 h-3.5" />
           </button>
         </div>
       </td>
@@ -362,32 +340,12 @@ export default function CategoriesPage() {
       return next;
     });
 
-  const openCreateSuper = () => setForm({ mode: "create", parentId: null, category: null });
-  const openCreateChild = (parentId: number) => {
-    setExpanded((prev) => new Set(prev).add(parentId));
-    setForm({ mode: "create", parentId, category: null });
-  };
-  const openEdit = (category: Category) => setForm({ mode: "edit", parentId: category.parentId, category });
+  const openEdit = (category: Category) => setForm({ mode: "edit", category });
   const closeForm = () => setForm(null);
 
-  const saveCategory = (data: Omit<Category, "id">, id?: number) => {
-    if (id !== undefined) {
-      setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...data } : c)));
-    } else {
-      setCategories((prev) => [...prev, { id: nextId++, ...data }]);
-    }
+  const saveCategory = (data: Omit<Category, "id">, id: number) => {
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...data } : c)));
     closeForm();
-  };
-
-  const deleteCategory = (id: number) => {
-    const target = categories.find((c) => c.id === id);
-    if (!target) return;
-    const hasChildren = categories.some((c) => c.parentId === id);
-    const message = hasChildren
-      ? "ეს კატეგორია შეიცავს ქვეკატეგორიებს. ნამდვილად გსურთ წაშლა?"
-      : "ნამდვილად გსურთ კატეგორიის წაშლა?";
-    if (!window.confirm(message)) return;
-    setCategories((prev) => prev.filter((c) => c.id !== id && c.parentId !== id));
   };
 
   const moveCategory = (id: number, direction: -1 | 1) => {
@@ -412,7 +370,6 @@ export default function CategoriesPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white/90">კატეგორიების მართვა</h1>
@@ -420,13 +377,6 @@ export default function CategoriesPage() {
             სუპერ კატეგორიების და შიდა კატეგორიების ნახვა და რედაქტირება
           </p>
         </div>
-        <button
-          onClick={openCreateSuper}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          <PlusIcon className="w-4 h-4" />
-          ახალი კატეგორია
-        </button>
       </div>
 
       {/* List card */}
@@ -487,8 +437,6 @@ export default function CategoriesPage() {
                       canMoveUp={sIdx > 0}
                       canMoveDown={sIdx < visibleSupers.length - 1}
                       onEdit={openEdit}
-                      onDelete={deleteCategory}
-                      onAddChild={openCreateChild}
                     />
                     {isExpanded &&
                       visibleChildren.map((child, cIdx) => (
@@ -501,19 +449,12 @@ export default function CategoriesPage() {
                           canMoveUp={cIdx > 0}
                           canMoveDown={cIdx < visibleChildren.length - 1}
                           onEdit={openEdit}
-                          onDelete={deleteCategory}
                         />
                       ))}
                     {isExpanded && visibleChildren.length === 0 && (
                       <tr>
                         <td colSpan={6} className="px-4 py-3 pl-16 text-xs text-gray-400 dark:text-gray-500">
-                          ქვეკატეგორიები არ არის —{" "}
-                          <button
-                            onClick={() => openCreateChild(sup.id)}
-                            className="text-blue-500 hover:underline"
-                          >
-                            დაამატე
-                          </button>
+                          ქვეკატეგორიები არ არის
                         </td>
                       </tr>
                     )}
