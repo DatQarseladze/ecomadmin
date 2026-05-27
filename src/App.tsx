@@ -23,6 +23,7 @@ import CategoriesPage from "./pages/Categories";
 import EventsPage from "./pages/Events";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
+import RichTextEditorPage from "./pages/Forms/RichTextEditorPage";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
@@ -54,6 +55,7 @@ export default function App() {
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
+            <Route path="/rich-text-editor" element={<RichTextEditorPage />} />
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
