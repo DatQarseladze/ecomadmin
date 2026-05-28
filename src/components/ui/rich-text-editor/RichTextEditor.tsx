@@ -108,7 +108,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: "prose dark:prose-invert max-w-none focus:outline-none min-h-[200px] px-4 py-3",
+        class: "rte-rendered focus:outline-none min-h-[200px] px-4 py-3",
       },
     },
   });

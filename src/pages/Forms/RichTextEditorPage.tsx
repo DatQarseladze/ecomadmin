@@ -68,7 +68,7 @@ export default function RichTextEditorPage() {
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
             <h3 className="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Preview</h3>
             <div
-              className="rich-text-editor-content border border-gray-100 dark:border-gray-800 rounded-xl min-h-[150px] px-4 py-3 text-sm text-gray-700 dark:text-gray-300"
+              className="rte-rendered border border-gray-100 dark:border-gray-800 rounded-xl min-h-[150px] px-4 py-3 text-sm text-gray-700 dark:text-gray-300"
               dangerouslySetInnerHTML={{ __html: sanitized }}
             />
           </div>
