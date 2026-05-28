@@ -793,6 +793,7 @@ span.flatpickr-weekday,
 
 /* =========================================================
    Rich Text Editor (TipTap / ProseMirror)
+   .rte-rendered is shared between the editor and the preview
    ========================================================= */
 
 .rich-text-editor-content .ProseMirror {
@@ -800,52 +801,54 @@ span.flatpickr-weekday,
 }
 
 /* Headings */
-.rich-text-editor-content .ProseMirror h1 { @apply text-3xl font-bold my-3; }
-.rich-text-editor-content .ProseMirror h2 { @apply text-2xl font-bold my-3; }
-.rich-text-editor-content .ProseMirror h3 { @apply text-xl font-bold my-2; }
-.rich-text-editor-content .ProseMirror h4 { @apply text-lg font-semibold my-2; }
-.rich-text-editor-content .ProseMirror h5 { @apply text-base font-semibold my-1; }
-.rich-text-editor-content .ProseMirror h6 { @apply text-sm font-semibold my-1; }
+.rte-rendered h1 { @apply text-3xl font-bold my-3; }
+.rte-rendered h2 { @apply text-2xl font-bold my-3; }
+.rte-rendered h3 { @apply text-xl font-bold my-2; }
+.rte-rendered h4 { @apply text-lg font-semibold my-2; }
+.rte-rendered h5 { @apply text-base font-semibold my-1; }
+.rte-rendered h6 { @apply text-sm font-semibold my-1; }
 
 /* Paragraph */
-.rich-text-editor-content .ProseMirror p { @apply my-1.5 leading-relaxed; }
+.rte-rendered p { @apply my-1.5 leading-relaxed; }
 
 /* Lists */
-.rich-text-editor-content .ProseMirror ul { @apply list-disc pl-5 my-2 space-y-1; }
-.rich-text-editor-content .ProseMirror ol { @apply list-decimal pl-5 my-2 space-y-1; }
+.rte-rendered ul { @apply list-disc pl-5 my-2 space-y-1; }
+.rte-rendered ol { @apply list-decimal pl-5 my-2 space-y-1; }
 
 /* Blockquote */
-.rich-text-editor-content .ProseMirror blockquote {
+.rte-rendered blockquote {
   @apply border-l-4 border-brand-400 pl-4 my-3 italic text-gray-600 dark:text-gray-400;
 }
 
 /* Code inline */
-.rich-text-editor-content .ProseMirror code {
+.rte-rendered code {
   @apply bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5 text-xs text-rose-600 dark:text-rose-400;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /* Code block */
-.rich-text-editor-content .ProseMirror pre {
+.rte-rendered pre {
   @apply bg-gray-900 dark:bg-gray-950 rounded-lg px-4 py-3 my-3 overflow-x-auto;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
-.rich-text-editor-content .ProseMirror pre code {
+.rte-rendered pre code {
   @apply bg-transparent text-gray-100 text-xs p-0;
   font-family: inherit;
 }
 
 /* Table */
-.rich-text-editor-content .ProseMirror table {
+.rte-rendered table {
   @apply w-full border-collapse my-3 text-sm;
 }
-.rich-text-editor-content .ProseMirror th,
-.rich-text-editor-content .ProseMirror td {
+.rte-rendered th,
+.rte-rendered td {
   @apply border border-gray-200 dark:border-gray-700 px-3 py-2 text-left;
 }
-.rich-text-editor-content .ProseMirror th {
+.rte-rendered th {
   @apply bg-gray-50 dark:bg-gray-800 font-semibold;
 }
+
+/* Table — editor-only selection/resize handles */
 .rich-text-editor-content .ProseMirror .selectedCell:after {
   @apply absolute inset-0 bg-brand-100/50 dark:bg-brand-900/30 pointer-events-none;
   content: "";
@@ -855,12 +858,12 @@ span.flatpickr-weekday,
 }
 
 /* Images */
-.rich-text-editor-content .ProseMirror img {
+.rte-rendered img {
   @apply max-w-full h-auto rounded my-2;
 }
 
 /* Links */
-.rich-text-editor-content .ProseMirror a {
+.rte-rendered a {
   @apply text-brand-500 underline hover:text-brand-600;
 }
 
