@@ -126,7 +126,6 @@ interface SliderItem {
   id: number;
   name: string;
   type: string;
-  contentType: string;
   slides: number;
   active: boolean;
 }
@@ -154,8 +153,8 @@ type ActiveTab = "sliders" | "banners";
 // ─── Initial data ─────────────────────────────────────────────────────────────
 
 const initialSliders: SliderItem[] = [
-  { id: 1, name: "მთავარი სლაიდერი", type: "Main Slider", contentType: "პროდუქტი, აქცია", slides: 4, active: true },
-  { id: 2, name: "პრომო სლაიდერი",   type: "Promo Slider", contentType: "აქცია, cross-sell",  slides: 2, active: false },
+  { id: 1, name: "მთავარი სლაიდერი", type: "Main Slider", slides: 4, active: true },
+  { id: 2, name: "პრომო სლაიდერი",   type: "Promo Slider", slides: 2, active: false },
 ];
 
 const defaultBanner = (): Omit<BannerItem, "id"> => ({
@@ -179,7 +178,6 @@ const initialBanners: BannerItem[] = [
 ];
 
 const sliderTypes  = ["Main Slider", "Promo Slider", "Category Slider"];
-const contentTypes = ["პროდუქტი", "აქცია", "სიახლე", "cross-sell"];
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 
@@ -268,7 +266,7 @@ function SliderTable({ sliders, editingId, onEdit, onDelete, onToggleActive }: S
       <table className="w-full text-sm">
         <thead className="bg-gray-50 dark:bg-gray-800 text-left">
           <tr>
-            {["სახელი","ტიპი","კონტენტი","სლაიდები","სტატუსი","მოქმედება"].map((h) => (
+            {["სახელი","ტიპი","სლაიდები","სტატუსი","მოქმედება"].map((h) => (
               <th key={h} className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{h}</th>
             ))}
           </tr>
@@ -280,7 +278,6 @@ function SliderTable({ sliders, editingId, onEdit, onDelete, onToggleActive }: S
               <td className="px-4 py-3">
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded text-xs font-medium">{s.type}</span>
               </td>
-              <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{s.contentType}</td>
               <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{s.slides}</td>
               <td className="px-4 py-3">
                 <button onClick={() => onToggleActive(s.id)} className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${s.active ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>
@@ -307,8 +304,8 @@ function SliderTable({ sliders, editingId, onEdit, onDelete, onToggleActive }: S
 
 interface SliderFormProps {
   formMode: SliderFormMode;
-  form: { name: string; type: string; contentType: string };
-  onChange: (f: { name: string; type: string; contentType: string }) => void;
+  form: { name: string; type: string };
+  onChange: (f: { name: string; type: string }) => void;
   onSave: () => void;
   onClose: () => void;
 }
@@ -338,23 +335,9 @@ function SliderFormPanel({ formMode, form, onChange, onSave, onClose }: SliderFo
         </div>
 
         <div>
-          <p className={sectionTitleCls}>Content Type</p>
-          <label className={labelCls}>კონტენტის ტიპი</label>
-          <div className="flex flex-wrap gap-2">
-            {contentTypes.map((t) => (
-              <button key={t} onClick={() => onChange({ ...form, contentType: t })}
-                className={`px-4 py-1.5 rounded-full border text-sm transition-colors ${form.contentType === t ? "bg-blue-600 border-blue-600 text-white" : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-400"}`}>
-                {t}
-              </button>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-gray-400">შეგიძლიათ არჩეოთ მრავალი ტიპი</p>
-        </div>
-
-        <div>
           <p className={sectionTitleCls}>სურათების ატვირთვა</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {["Desktop სურათი", "Mobile სურათი"].map((lbl) => (
+            {['Desktop სურათი', 'Mobile სურათი'].map((lbl) => (
               <div key={lbl}>
                 <label className={labelCls}>{lbl}</label>
                 <input type="file" accept="image/*" className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-400" />
@@ -677,10 +660,10 @@ export default function SlidersPage() {
   const [sliders, setSliders] = useState<SliderItem[]>(initialSliders);
   const [sliderFormMode, setSliderFormMode] = useState<SliderFormMode>(null);
   const [sliderEditingId, setSliderEditingId] = useState<number | null>(null);
-  const [sliderForm, setSliderForm] = useState({ name: "", type: "", contentType: "პროდუქტი" });
+  const [sliderForm, setSliderForm] = useState({ name: "", type: "" });
 
-  const openSliderCreate = () => { setSliderForm({ name: "", type: "", contentType: "პროდუქტი" }); setSliderEditingId(null); setSliderFormMode("create"); };
-  const openSliderEdit = (s: SliderItem) => { setSliderForm({ name: s.name, type: s.type, contentType: s.contentType }); setSliderEditingId(s.id); setSliderFormMode("edit"); };
+  const openSliderCreate = () => { setSliderForm({ name: "", type: "" }); setSliderEditingId(null); setSliderFormMode("create"); };
+  const openSliderEdit = (s: SliderItem) => { setSliderForm({ name: s.name, type: s.type }); setSliderEditingId(s.id); setSliderFormMode("edit"); };
   const closeSliderForm = () => { setSliderFormMode(null); setSliderEditingId(null); };
   const saveSlider = () => {
     if (!sliderForm.name.trim() || !sliderForm.type) return;
